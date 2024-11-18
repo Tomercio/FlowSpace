@@ -12,8 +12,8 @@ const Column = ({
   return (
     <div
       className="bg-gray-50 dark:bg-gray-800 rounded-lg shadow-sm p-4 h-fit touch-none"
-      onDragOver={(e) => onDragOver(e)}
-      onDrop={(e) => onDrop(e, columnName)}
+      onDragOver={(e) => onDragOver(e)} // Allow drag-over behavior
+      onDrop={(e) => onDrop(e, columnName)} // Handle drop event with column name
     >
       <h2 className="font-bold text-lg mb-4 flex items-center dark:text-white">
         <span
