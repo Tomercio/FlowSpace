@@ -18,8 +18,6 @@ const Board = () => {
   const [newDueDate, setNewDueDate] = useState("");
   const [newPriority, setNewPriority] = useState("normal");
   const [editTask, setEditTask] = useState(null);
-  const [draggedTask, setDraggedTask] = useState(null);
-  const [draggedColumn, setDraggedColumn] = useState(null);
   const [filters, setFilters] = useState({
     search: "",
     priority: "",
