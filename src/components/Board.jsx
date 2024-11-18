@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { Plus, Search, BarChart2 } from "lucide-react";
 import Column from "./Column";
 import EmergencyContacts from "./EmergencyContacts";
@@ -24,6 +24,13 @@ const Board = () => {
     assignee: "",
     dueDate: "",
   });
+  const [showAnalytics, setShowAnalytics] = useState(false);
+
+  // Hybrid drag handling state
+  const [draggedTask, setDraggedTask] = useState(null);
+  const [touchStartX, setTouchStartX] = useState(0);
+  const [touchStartY, setTouchStartY] = useState(0);
+  const columnRefs = useRef({});
 
   useEffect(() => {
     const savedColumns = localStorage.getItem("taskColumns");
@@ -56,7 +63,75 @@ const Board = () => {
     });
   };
 
-  // Task Management Functions
+  // Touch Event Handlers
+  const handleTouchStart = (e, task, sourceColumn) => {
+    const touch = e.touches[0];
+    setTouchStartX(touch.clientX);
+    setTouchStartY(touch.clientY);
+    setDraggedTask({ task, sourceColumn });
+  };
+
+  const handleTouchMove = (e) => {
+    if (!draggedTask) return;
+    e.preventDefault();
+  };
+
+  const handleTouchEnd = (targetColumn) => {
+    if (!draggedTask || !targetColumn) return;
+
+    if (targetColumn !== draggedTask.sourceColumn) {
+      moveTask(draggedTask.task, draggedTask.sourceColumn, targetColumn);
+    }
+
+    setDraggedTask(null);
+    setTouchStartX(0);
+    setTouchStartY(0);
+  };
+
+  // Mouse Event Handlers
+  const handleDragStart = (e, task, columnName) => {
+    if (e && e.dataTransfer) {
+      e.dataTransfer.setData(
+        "application/json",
+        JSON.stringify({ task, columnName })
+      );
+    }
+  };
+
+  const handleDragOver = (e) => {
+    e.preventDefault();
+  };
+
+  const handleDrop = (e, targetColumn) => {
+    e.preventDefault();
+    try {
+      const { task, columnName: sourceColumn } = JSON.parse(
+        e.dataTransfer.getData("application/json")
+      );
+
+      if (sourceColumn !== targetColumn) {
+        moveTask(task, sourceColumn, targetColumn);
+      }
+    } catch (err) {
+      console.error("Error parsing drag data:", err);
+    }
+  };
+
+  // Shared task movement logic
+  const moveTask = (task, sourceColumn, targetColumn) => {
+    setColumns((prev) => {
+      const updatedColumns = { ...prev };
+      updatedColumns[sourceColumn] = updatedColumns[sourceColumn].filter(
+        (t) => t.id !== task.id
+      );
+      updatedColumns[targetColumn] = [
+        ...updatedColumns[targetColumn],
+        { ...task, lastMoved: new Date().toISOString() },
+      ];
+      return updatedColumns;
+    });
+  };
+
   const resetNewTaskForm = () => {
     setNewTask("");
     setNewAssignee("");
@@ -89,48 +164,6 @@ const Board = () => {
     resetNewTaskForm();
   };
 
-  // Drag and Drop Handlers
-  const handleDragOver = (e) => {
-    e.preventDefault(); // Ensure drag-over behavior works correctly
-  };
-
-  const handleDragStart = (e, task, columnName) => {
-    if (e && e.dataTransfer) {
-      e.dataTransfer.setData(
-        "application/json",
-        JSON.stringify({ task, columnName })
-      );
-    } else {
-      console.error("DragStart event or dataTransfer is not defined");
-    }
-  };
-
-  const handleDrop = (e, columnName) => {
-    e.preventDefault();
-    try {
-      const { task, columnName: draggedColumnName } = JSON.parse(
-        e.dataTransfer.getData("application/json")
-      );
-
-      if (draggedColumnName && draggedColumnName !== columnName) {
-        setColumns((prev) => {
-          const updatedColumns = { ...prev };
-          updatedColumns[draggedColumnName] = updatedColumns[
-            draggedColumnName
-          ].filter((t) => t.id !== task.id);
-          updatedColumns[columnName] = [
-            ...updatedColumns[columnName],
-            { ...task, lastMoved: new Date().toISOString() },
-          ];
-          return updatedColumns;
-        });
-      }
-    } catch (err) {
-      console.error("Error parsing dataTransfer data:", err);
-    }
-  };
-
-  // Edit Task Functions
   const handleEditTask = (columnName, taskId) => {
     const taskToEdit = columns[columnName].find((task) => task.id === taskId);
     setEditTask({ ...taskToEdit, columnName });
@@ -152,8 +185,6 @@ const Board = () => {
     }
   };
 
-  const [showAnalytics, setShowAnalytics] = useState(false);
-
   const deleteTask = () => {
     if (editTask) {
       const { columnName, id } = editTask;
@@ -166,6 +197,29 @@ const Board = () => {
       });
       setEditTask(null);
     }
+  };
+
+  // Columns rendering with hybrid support
+  const renderColumns = () => {
+    return Object.entries(columns).map(([columnName, tasks]) => (
+      <div
+        key={columnName}
+        ref={(el) => (columnRefs.current[columnName] = el)}
+        className="h-full"
+        onDragOver={handleDragOver}
+        onDrop={(e) => handleDrop(e, columnName)}
+      >
+        <Column
+          columnName={columnName}
+          tasks={getFilteredTasks(tasks)}
+          onDragStart={handleDragStart}
+          onTouchStart={handleTouchStart}
+          onTouchMove={handleTouchMove}
+          onTouchEnd={() => handleTouchEnd(columnName)}
+          onEditTask={handleEditTask}
+        />
+      </div>
+    ));
   };
 
   return (
@@ -183,6 +237,7 @@ const Board = () => {
         </button>
         {showAnalytics && <TaskAnalytics columns={columns} />}
       </div>
+
       {/* Search and Filters */}
       <div className="mb-6 max-w-[98%] mx-auto bg-white dark:bg-gray-800 p-4 rounded-lg shadow-sm">
         <div className="flex flex-wrap gap-4">
@@ -238,17 +293,7 @@ const Board = () => {
 
       {/* Board Columns */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 max-w-[98%] mx-auto">
-        {Object.entries(columns).map(([columnName, tasks]) => (
-          <Column
-            key={columnName}
-            columnName={columnName}
-            tasks={getFilteredTasks(tasks)}
-            onDragOver={handleDragOver}
-            onDrop={handleDrop}
-            onDragStart={handleDragStart}
-            onEditTask={handleEditTask}
-          />
-        ))}
+        {renderColumns()}
       </div>
 
       {/* Add Task Modal */}
@@ -403,7 +448,7 @@ const Board = () => {
                     setEditTask({ ...editTask, priority: e.target.value })
                   }
                   className="w-full p-2 border rounded-md dark:bg-gray-700 dark:border-gray-600 dark:text-white 
-hover:border-blue-500 focus:ring-2 focus:ring-blue-500"
+                         hover:border-blue-500 focus:ring-2 focus:ring-blue-500"
                 >
                   <option value="low">Low Priority</option>
                   <option value="normal">Normal Priority</option>

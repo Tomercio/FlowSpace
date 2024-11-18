@@ -1,19 +1,29 @@
 import React from "react";
 import { Calendar, AlertCircle, User, MoreVertical } from "lucide-react";
 
-const TaskCard = ({ task, columnName, onDragStart, onEdit }) => {
+const TaskCard = ({ task, columnName, onDragStart, onTouchStart, onEdit }) => {
+  const handleTouchStart = (e) => {
+    e.preventDefault();
+    onTouchStart(e, task, columnName);
+  };
+
   return (
     <div
-      draggable
+      draggable="true"
       onDragStart={(e) => onDragStart(e, task, columnName)}
-      className="bg-blue-50 dark:bg-gray-700 border dark:border-gray-600 rounded-lg p-3 shadow-sm hover:shadow-md transition-shadow cursor-move"
+      onTouchStart={handleTouchStart}
+      className="bg-blue-50 dark:bg-gray-700 border dark:border-gray-600 rounded-lg p-3 shadow-sm 
+                hover:shadow-md transition-shadow active:shadow-lg touch-manipulation cursor-move"
     >
       <div className="flex items-start justify-between">
         <h3 className="font-medium text-gray-900 dark:text-white">
           {task.task}
         </h3>
         <button
-          onClick={() => onEdit(columnName, task.id)}
+          onClick={(e) => {
+            e.stopPropagation();
+            onEdit(columnName, task.id);
+          }}
           className="text-gray-400 hover:text-gray-600 dark:text-gray-300 dark:hover:text-gray-100"
         >
           <MoreVertical size={16} />

@@ -4,16 +4,17 @@ import TaskCard from "./TaskCard";
 const Column = ({
   columnName,
   tasks,
-  onDragOver,
-  onDrop,
   onDragStart,
+  onTouchStart,
+  onTouchMove,
+  onTouchEnd,
   onEditTask,
 }) => {
   return (
     <div
-      className="bg-gray-50 dark:bg-gray-800 rounded-lg shadow-sm p-4 h-fit touch-none"
-      onDragOver={(e) => onDragOver(e)} // Allow drag-over behavior
-      onDrop={(e) => onDrop(e, columnName)} // Handle drop event with column name
+      className="bg-gray-50 dark:bg-gray-800 rounded-lg shadow-sm p-4 h-fit"
+      onTouchMove={onTouchMove}
+      onTouchEnd={onTouchEnd}
     >
       <h2 className="font-bold text-lg mb-4 flex items-center dark:text-white">
         <span
@@ -38,7 +39,8 @@ const Column = ({
             key={task.id}
             task={task}
             columnName={columnName}
-            onDragStart={(e) => onDragStart(e, task, columnName)} // Pass task and column name
+            onDragStart={onDragStart}
+            onTouchStart={onTouchStart}
             onEdit={onEditTask}
           />
         ))}
