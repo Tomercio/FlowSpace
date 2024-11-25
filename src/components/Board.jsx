@@ -1,22 +1,21 @@
 import React, { useState, useEffect, useRef } from "react";
 import { Plus, Search, BarChart2 } from "lucide-react";
 import Column from "./Column";
-import EmergencyContacts from "./EmergencyContacts";
 import TaskAnalytics from "./TaskAnalytics";
 
 const Board = () => {
   const [columns, setColumns] = useState({
-    Todo: [],
-    Pending: [],
-    Working: [],
-    Finished: [],
+    "משימות חדשות": [],
+    בהמתנה: [],
+    בעבודה: [],
+    הושלם: [],
   });
 
   const [showAddModal, setShowAddModal] = useState(false);
   const [newTask, setNewTask] = useState("");
   const [newAssignee, setNewAssignee] = useState("");
   const [newDueDate, setNewDueDate] = useState("");
-  const [newPriority, setNewPriority] = useState("normal");
+  const [newPriority, setNewPriority] = useState("רגילה");
   const [editTask, setEditTask] = useState(null);
   const [filters, setFilters] = useState({
     search: "",
@@ -43,7 +42,6 @@ const Board = () => {
     localStorage.setItem("taskColumns", JSON.stringify(columns));
   }, [columns]);
 
-  // Filter functions
   const getFilteredTasks = (tasks) => {
     return tasks.filter((task) => {
       const matchesSearch =
@@ -63,7 +61,6 @@ const Board = () => {
     });
   };
 
-  // Touch Event Handlers
   const handleTouchStart = (e, task, sourceColumn) => {
     const touch = e.touches[0];
     setTouchStartX(touch.clientX);
@@ -88,7 +85,6 @@ const Board = () => {
     setTouchStartY(0);
   };
 
-  // Mouse Event Handlers
   const handleDragStart = (e, task, columnName) => {
     if (e && e.dataTransfer) {
       e.dataTransfer.setData(
@@ -117,7 +113,6 @@ const Board = () => {
     }
   };
 
-  // Shared task movement logic
   const moveTask = (task, sourceColumn, targetColumn) => {
     setColumns((prev) => {
       const updatedColumns = { ...prev };
@@ -136,13 +131,13 @@ const Board = () => {
     setNewTask("");
     setNewAssignee("");
     setNewDueDate("");
-    setNewPriority("normal");
+    setNewPriority("רגילה");
     setShowAddModal(false);
   };
 
   const addTaskToTodo = () => {
     if (newTask.trim() === "" || newAssignee.trim() === "") {
-      alert("Please fill in both task name and assignee!");
+      alert("נא למלא את שם המשימה והאחראי!");
       return;
     }
 
@@ -158,7 +153,7 @@ const Board = () => {
 
     setColumns((prev) => ({
       ...prev,
-      Todo: [...prev.Todo, newTaskObj],
+      "משימות חדשות": [...prev["משימות חדשות"], newTaskObj],
     }));
 
     resetNewTaskForm();
@@ -199,41 +194,16 @@ const Board = () => {
     }
   };
 
-  // Columns rendering with hybrid support
-  const renderColumns = () => {
-    return Object.entries(columns).map(([columnName, tasks]) => (
-      <div
-        key={columnName}
-        ref={(el) => (columnRefs.current[columnName] = el)}
-        className="h-full"
-        onDragOver={handleDragOver}
-        onDrop={(e) => handleDrop(e, columnName)}
-      >
-        <Column
-          columnName={columnName}
-          tasks={getFilteredTasks(tasks)}
-          onDragStart={handleDragStart}
-          onTouchStart={handleTouchStart}
-          onTouchMove={handleTouchMove}
-          onTouchEnd={() => handleTouchEnd(columnName)}
-          onEditTask={handleEditTask}
-        />
-      </div>
-    ));
-  };
-
   return (
-    <div className="p-6 bg-gray-100 dark:bg-gray-900 min-h-screen">
-      <EmergencyContacts />
-
+    <div className="p-6 bg-gray-100 dark:bg-gray-900 min-h-screen" dir="rtl">
       <div className="mb-6 max-w-[98%] mx-auto">
         <button
           onClick={() => setShowAnalytics(!showAnalytics)}
           className="flex items-center px-4 py-2 bg-blue-500 dark:bg-blue-600 text-white rounded-md 
               hover:bg-blue-600 dark:hover:bg-blue-700 transition-colors"
         >
-          <BarChart2 className="mr-2" size={20} />
-          {showAnalytics ? "Hide Analytics" : "Show Analytics"}
+          <BarChart2 className="ml-2" size={20} />
+          {showAnalytics ? "הסתר אנליטיקות" : "הצג אנליטיקות"}
         </button>
         {showAnalytics && <TaskAnalytics columns={columns} />}
       </div>
@@ -244,17 +214,17 @@ const Board = () => {
           <div className="flex-1 min-w-[200px]">
             <div className="relative">
               <Search
-                className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400"
+                className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400"
                 size={20}
               />
               <input
                 type="text"
-                placeholder="Search tasks..."
+                placeholder="חיפוש משימות..."
                 value={filters.search}
                 onChange={(e) =>
                   setFilters((prev) => ({ ...prev, search: e.target.value }))
                 }
-                className="w-full pl-10 pr-4 py-2 rounded-lg border border-gray-200 dark:border-gray-700 
+                className="w-full pr-10 pl-4 py-2 rounded-lg border border-gray-200 dark:border-gray-700 
                        dark:bg-gray-700 dark:text-white focus:ring-2 focus:ring-blue-500"
               />
             </div>
@@ -267,11 +237,11 @@ const Board = () => {
             className="px-4 py-2 rounded-lg border border-gray-200 dark:border-gray-700 
                    dark:bg-gray-700 dark:text-white focus:ring-2 focus:ring-blue-500"
           >
-            <option value="">All Priorities</option>
-            <option value="urgent">Urgent</option>
-            <option value="high">High</option>
-            <option value="normal">Normal</option>
-            <option value="low">Low</option>
+            <option value="">כל העדיפויות</option>
+            <option value="urgent">דחוף</option>
+            <option value="high">גבוהה</option>
+            <option value="normal">רגילה</option>
+            <option value="low">נמוכה</option>
           </select>
         </div>
       </div>
@@ -279,21 +249,39 @@ const Board = () => {
       {/* Board Header */}
       <div className="flex justify-between items-center mb-8 max-w-[98%] mx-auto">
         <h1 className="text-3xl font-bold text-gray-800 dark:text-white">
-          Work Board
+          לוח עבודה
         </h1>
         <button
           onClick={() => setShowAddModal(true)}
           className="flex items-center px-4 py-2 bg-blue-500 dark:bg-blue-600 text-white rounded-md 
                    hover:bg-blue-600 dark:hover:bg-blue-700 transition-colors"
         >
-          <Plus className="mr-2" size={20} />
-          Add New Task
+          <Plus className="ml-2" size={20} />
+          משימה חדשה
         </button>
       </div>
 
       {/* Board Columns */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 max-w-[98%] mx-auto">
-        {renderColumns()}
+        {Object.entries(columns).map(([columnName, tasks]) => (
+          <div
+            key={columnName}
+            ref={(el) => (columnRefs.current[columnName] = el)}
+            className="h-full"
+            onDragOver={handleDragOver}
+            onDrop={(e) => handleDrop(e, columnName)}
+          >
+            <Column
+              columnName={columnName}
+              tasks={getFilteredTasks(tasks)}
+              onDragStart={handleDragStart}
+              onTouchStart={handleTouchStart}
+              onTouchMove={handleTouchMove}
+              onTouchEnd={() => handleTouchEnd(columnName)}
+              onEditTask={handleEditTask}
+            />
+          </div>
+        ))}
       </div>
 
       {/* Add Task Modal */}
@@ -302,7 +290,7 @@ const Board = () => {
           <div className="bg-gray-50 dark:bg-gray-800 rounded-lg shadow-xl p-6 w-full max-w-md">
             <div className="flex justify-between items-center mb-4">
               <h2 className="text-xl font-bold dark:text-white">
-                Add New Task
+                הוספת משימה חדשה
               </h2>
               <button
                 onClick={() => setShowAddModal(false)}
@@ -315,56 +303,52 @@ const Board = () => {
             <div className="space-y-4">
               <div>
                 <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
-                  Task Name
+                  שם המשימה
                 </label>
                 <input
                   type="text"
                   value={newTask}
                   onChange={(e) => setNewTask(e.target.value)}
-                  className="w-full p-2 border rounded-md dark:bg-gray-700 dark:border-gray-600 dark:text-white 
-                         hover:border-blue-500 focus:ring-2 focus:ring-blue-500"
-                  placeholder="What needs to be done?"
+                  className="w-full p-2 border rounded-md dark:bg-gray-700 dark:border-gray-600 dark:text-white"
+                  placeholder="מה צריך לעשות?"
                 />
               </div>
               <div>
                 <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
-                  Assign To
+                  שייך ל
                 </label>
                 <input
                   type="text"
                   value={newAssignee}
                   onChange={(e) => setNewAssignee(e.target.value)}
-                  className="w-full p-2 border rounded-md dark:bg-gray-700 dark:border-gray-600 dark:text-white 
-                         hover:border-blue-500 focus:ring-2 focus:ring-blue-500"
-                  placeholder="Who will do this?"
+                  className="w-full p-2 border rounded-md dark:bg-gray-700 dark:border-gray-600 dark:text-white"
+                  placeholder="מי יבצע את המשימה?"
                 />
               </div>
               <div>
                 <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
-                  Due Date
+                  תאריך יעד
                 </label>
                 <input
                   type="date"
                   value={newDueDate}
                   onChange={(e) => setNewDueDate(e.target.value)}
-                  className="w-full p-2 border rounded-md dark:bg-gray-700 dark:border-gray-600 dark:text-white 
-                         hover:border-blue-500 focus:ring-2 focus:ring-blue-500"
+                  className="w-full p-2 border rounded-md dark:bg-gray-700 dark:border-gray-600 dark:text-white"
                 />
               </div>
               <div>
                 <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
-                  Priority
+                  עדיפות
                 </label>
                 <select
                   value={newPriority}
                   onChange={(e) => setNewPriority(e.target.value)}
-                  className="w-full p-2 border rounded-md dark:bg-gray-700 dark:border-gray-600 dark:text-white 
-                         hover:border-blue-500 focus:ring-2 focus:ring-blue-500"
+                  className="w-full p-2 border rounded-md dark:bg-gray-700 dark:border-gray-600 dark:text-white"
                 >
-                  <option value="low">Low Priority</option>
-                  <option value="normal">Normal Priority</option>
-                  <option value="high">High Priority</option>
-                  <option value="urgent">Urgent</option>
+                  <option value="low">עדיפות נמוכה</option>
+                  <option value="normal">עדיפות רגילה</option>
+                  <option value="high">עדיפות גבוהה</option>
+                  <option value="urgent">דחוף</option>
                 </select>
               </div>
             </div>
@@ -372,16 +356,15 @@ const Board = () => {
             <div className="mt-6 flex justify-end space-x-3">
               <button
                 onClick={() => setShowAddModal(false)}
-                className="px-4 py-2 text-gray-600 dark:text-gray-300 hover:text-gray-800 dark:hover:text-gray-100"
+                className="px-4 py-2 text-gray-600 dark:text-gray-300 hover:text-gray-800"
               >
-                Cancel
+                ביטול
               </button>
               <button
                 onClick={addTaskToTodo}
-                className="px-4 py-2 bg-blue-500 dark:bg-blue-600 text-white rounded-md hover:bg-blue-600 
-                       dark:hover:bg-blue-700"
+                className="px-4 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600"
               >
-                Add Task
+                הוסף משימה
               </button>
             </div>
           </div>
@@ -393,12 +376,12 @@ const Board = () => {
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
           <div className="bg-gray-50 dark:bg-gray-800 rounded-lg shadow-xl p-6 w-full max-w-md">
             <h2 className="text-xl font-bold mb-4 dark:text-white">
-              Edit Task
+              עריכת משימה
             </h2>
             <div className="space-y-4">
               <div>
                 <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
-                  Task Name
+                  שם המשימה
                 </label>
                 <input
                   type="text"
@@ -406,13 +389,12 @@ const Board = () => {
                   onChange={(e) =>
                     setEditTask({ ...editTask, task: e.target.value })
                   }
-                  className="w-full p-2 border rounded-md dark:bg-gray-700 dark:border-gray-600 dark:text-white 
-                         hover:border-blue-500 focus:ring-2 focus:ring-blue-500"
+                  className="w-full p-2 border rounded-md dark:bg-gray-700 dark:border-gray-600 dark:text-white"
                 />
               </div>
               <div>
                 <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
-                  Assign To
+                  שייך ל
                 </label>
                 <input
                   type="text"
@@ -420,13 +402,12 @@ const Board = () => {
                   onChange={(e) =>
                     setEditTask({ ...editTask, assignee: e.target.value })
                   }
-                  className="w-full p-2 border rounded-md dark:bg-gray-700 dark:border-gray-600 dark:text-white 
-                         hover:border-blue-500 focus:ring-2 focus:ring-blue-500"
+                  className="w-full p-2 border rounded-md dark:bg-gray-700 dark:border-gray-600 dark:text-white"
                 />
               </div>
               <div>
                 <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
-                  Due Date
+                  תאריך יעד
                 </label>
                 <input
                   type="date"
@@ -434,49 +415,45 @@ const Board = () => {
                   onChange={(e) =>
                     setEditTask({ ...editTask, dueDate: e.target.value })
                   }
-                  className="w-full p-2 border rounded-md dark:bg-gray-700 dark:border-gray-600 dark:text-white 
-                         hover:border-blue-500 focus:ring-2 focus:ring-blue-500"
+                  className="w-full p-2 border rounded-md dark:bg-gray-700 dark:border-gray-600 dark:text-white"
                 />
               </div>
               <div>
                 <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
-                  Priority
+                  עדיפות
                 </label>
                 <select
                   value={editTask.priority || "normal"}
                   onChange={(e) =>
                     setEditTask({ ...editTask, priority: e.target.value })
                   }
-                  className="w-full p-2 border rounded-md dark:bg-gray-700 dark:border-gray-600 dark:text-white 
-                         hover:border-blue-500 focus:ring-2 focus:ring-blue-500"
+                  className="w-full p-2 border rounded-md dark:bg-gray-700 dark:border-gray-600 dark:text-white"
                 >
-                  <option value="low">Low Priority</option>
-                  <option value="normal">Normal Priority</option>
-                  <option value="high">High Priority</option>
-                  <option value="urgent">Urgent</option>
+                  <option value="low">עדיפות נמוכה</option>
+                  <option value="normal">עדיפות רגילה</option>
+                  <option value="high">עדיפות גבוהה</option>
+                  <option value="urgent">דחוף</option>
                 </select>
               </div>
             </div>
-            <div className="mt-6 flex justify-end space-x-3">
+            <div className="mt-6 flex justify-end gap-3">
               <button
                 onClick={() => setEditTask(null)}
-                className="px-4 py-2 text-gray-600 dark:text-gray-300 hover:text-gray-800 dark:hover:text-gray-100"
+                className="px-4 py-2 text-gray-600 dark:text-gray-300 hover:text-gray-800"
               >
-                Cancel
+                ביטול
               </button>
               <button
                 onClick={saveEditedTask}
-                className="px-4 py-2 bg-blue-500 dark:bg-blue-600 text-white rounded-md hover:bg-blue-600 
-                       dark:hover:bg-blue-700"
+                className="px-4 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600"
               >
-                Save Changes
+                שמור שינויים
               </button>
               <button
                 onClick={deleteTask}
-                className="px-4 py-2 bg-red-500 dark:bg-red-600 text-white rounded-md hover:bg-red-600 
-                       dark:hover:bg-red-700"
+                className="px-4 py-2 bg-red-500 text-white rounded-md hover:bg-red-600"
               >
-                Delete Task
+                מחק משימה
               </button>
             </div>
           </div>

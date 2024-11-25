@@ -26,7 +26,7 @@ const TaskAnalytics = ({ columns }) => {
   return (
     <div className="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-sm mb-6">
       <h2 className="text-xl font-bold mb-6 text-gray-800 dark:text-white">
-        Task Distribution
+        חלוקת משימות{" "}
       </h2>
       <div className="h-64">
         <ResponsiveContainer width="100%" height="100%">
@@ -35,10 +35,10 @@ const TaskAnalytics = ({ columns }) => {
             <YAxis />
             <Tooltip />
             <Legend />
-            <Bar dataKey="urgent" fill="#ef4444" name="Urgent" />
-            <Bar dataKey="high" fill="#f97316" name="High" />
-            <Bar dataKey="normal" fill="#3b82f6" name="Normal" />
-            <Bar dataKey="low" fill="#22c55e" name="Low" />
+            <Bar dataKey="urgent" fill="#ef4444" name="דחוף" />
+            <Bar dataKey="high" fill="#f97316" name="עדיפות גבוהה" />
+            <Bar dataKey="normal" fill="#3b82f6" name="עדיפות סבירה" />
+            <Bar dataKey="low" fill="#22c55e" name="עדיפות נמוכה" />
           </BarChart>
         </ResponsiveContainer>
       </div>

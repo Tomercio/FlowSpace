@@ -46,7 +46,7 @@ const TaskCard = ({ task, columnName, onDragStart, onTouchStart, onEdit }) => {
       {task.priority === "urgent" && (
         <div className="mt-2 flex items-center text-red-500 dark:text-red-400 text-sm">
           <AlertCircle size={14} className="mr-1" />
-          Urgent
+          דחוף
         </div>
       )}
     </div>

@@ -223,7 +223,7 @@ const Calendar = () => {
                 className="flex items-center px-2 py-1 md:px-4 md:py-2 text-xs md:text-sm bg-blue-500 text-white rounded-md hover:bg-blue-600"
               >
                 <Plus className="w-4 h-4 md:w-5 md:h-5 mr-1" />
-                Add Reminder
+                הוסף תזכורת{" "}
               </button>
             </div>
 
@@ -265,7 +265,7 @@ const Calendar = () => {
           <div className="bg-white dark:bg-gray-800 rounded-lg shadow-xl p-4 md:p-6 w-full max-w-xs md:max-w-md">
             <div className="flex justify-between items-center mb-4 md:mb-6">
               <h2 className="text-lg md:text-xl font-bold text-gray-800 dark:text-white">
-                Add Reminder
+                הוסף תזכורת{" "}
               </h2>
               <button
                 onClick={() => setShowReminderModal(false)}
@@ -278,7 +278,7 @@ const Calendar = () => {
             <div className="space-y-3 md:space-y-4">
               <div>
                 <label className="block text-xs md:text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
-                  Title
+                  כותרת
                 </label>
                 <input
                   type="text"
@@ -287,13 +287,13 @@ const Calendar = () => {
                     setNewReminder({ ...newReminder, title: e.target.value })
                   }
                   className="w-full p-2 md:p-3 text-sm md:text-base border rounded-md dark:bg-gray-700 dark:border-gray-600 dark:text-white"
-                  placeholder="Reminder title"
+                  placeholder="כותרת תזכורת..."
                 />
               </div>
 
               <div>
                 <label className="block text-xs md:text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
-                  Time
+                  זמן
                 </label>
                 <input
                   type="time"
@@ -307,7 +307,7 @@ const Calendar = () => {
 
               <div>
                 <label className="block text-xs md:text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
-                  Email
+                  אימייל
                 </label>
                 <input
                   type="email"
@@ -316,13 +316,13 @@ const Calendar = () => {
                     setNewReminder({ ...newReminder, email: e.target.value })
                   }
                   className="w-full p-2 md:p-3 text-sm md:text-base border rounded-md dark:bg-gray-700 dark:border-gray-600 dark:text-white"
-                  placeholder="your@email.com"
+                  placeholder="רשום אימייל..."
                 />
               </div>
 
               <div>
                 <label className="block text-xs md:text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
-                  Description
+                  תאור
                 </label>
                 <textarea
                   value={newReminder.description}
@@ -333,7 +333,7 @@ const Calendar = () => {
                     })
                   }
                   className="w-full p-2 md:p-3 text-sm md:text-base border rounded-md dark:bg-gray-700 dark:border-gray-600 dark:text-white"
-                  placeholder="Add details..."
+                  placeholder="הוסף תאור..."
                   rows={2}
                 />
               </div>
@@ -344,13 +344,13 @@ const Calendar = () => {
                 onClick={() => setShowReminderModal(false)}
                 className="px-3 py-1 md:px-4 md:py-2 text-sm md:text-base text-gray-600 dark:text-gray-300 hover:text-gray-800 dark:hover:text-gray-100"
               >
-                Cancel
+                בטל
               </button>
               <button
                 onClick={saveReminder}
                 className="px-3 py-1 md:px-4 md:py-2 text-sm md:text-base bg-blue-500 text-white rounded-md hover:bg-blue-600"
               >
-                Save
+                שמור
               </button>
             </div>
           </div>

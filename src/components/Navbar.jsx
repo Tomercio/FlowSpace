@@ -12,7 +12,6 @@ const Navbar = ({ toggleSidebar }) => {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    console.log(isLogin ? "Login attempt:" : "Signup attempt:", formData);
   };
 
   const handleChange = (e) => {
@@ -29,7 +28,7 @@ const Navbar = ({ toggleSidebar }) => {
 
   return (
     <>
-      <nav className="bg-white dark:bg-gray-800 border-b border-gray-200 dark:border-gray-700 px-3 py-2">
+      <nav className="bg-white dark:bg-gray-800 border-b border-gray-200 dark:border-gray-700 px-3 py-1">
         <div className="container mx-auto flex justify-between items-center">
           <div className="flex items-center space-x-4">
             <button
@@ -42,16 +41,17 @@ const Navbar = ({ toggleSidebar }) => {
             <img
               src="/flowspace.png"
               alt="FlowSpace Logo"
-              className="mt-2 h-12 w-auto"
+              className="h-20 w-28" // Adjust image size
             />
           </div>
           <div className="flex items-center space-x-4">
             <button
+              dir="ltr"
               onClick={() => setShowAuthModal(true)}
               className="flex items-center px-4 py-2 text-sm font-medium text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-lg transition-colors duration-200"
             >
-              <LogIn className="w-4 h-4 mr-2" />
-              Sign In
+              <LogIn className="w-4 mr-2 mt-0.5" />
+              התחבר{" "}
             </button>
           </div>
         </div>
@@ -63,7 +63,7 @@ const Navbar = ({ toggleSidebar }) => {
           <div className="bg-white dark:bg-gray-800 rounded-lg shadow-xl w-full max-w-md p-6">
             <div className="flex justify-between items-center mb-6">
               <h2 className="text-2xl font-bold text-gray-900 dark:text-white">
-                {isLogin ? "Sign in" : "Create account"}
+                {isLogin ? "התחבר" : "הירשם"}
               </h2>
               <button
                 onClick={() => setShowAuthModal(false)}
@@ -77,7 +77,7 @@ const Navbar = ({ toggleSidebar }) => {
               {!isLogin && (
                 <div>
                   <label htmlFor="name" className="sr-only">
-                    Full Name
+                    שם מלא{" "}
                   </label>
                   <div className="relative">
                     <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
@@ -91,7 +91,7 @@ const Navbar = ({ toggleSidebar }) => {
                       value={formData.name}
                       onChange={handleChange}
                       className="appearance-none relative block w-full pl-10 pr-3 py-2 border border-gray-300 dark:border-gray-600 placeholder-gray-500 dark:placeholder-gray-400 text-gray-900 dark:text-white rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-gray-50 dark:bg-gray-700"
-                      placeholder="Full Name"
+                      placeholder="שם מלא..."
                     />
                   </div>
                 </div>
@@ -99,7 +99,7 @@ const Navbar = ({ toggleSidebar }) => {
 
               <div>
                 <label htmlFor="email" className="sr-only">
-                  Email address
+                  אימייל{" "}
                 </label>
                 <div className="relative">
                   <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
@@ -114,14 +114,14 @@ const Navbar = ({ toggleSidebar }) => {
                     value={formData.email}
                     onChange={handleChange}
                     className="appearance-none relative block w-full pl-10 pr-3 py-2 border border-gray-300 dark:border-gray-600 placeholder-gray-500 dark:placeholder-gray-400 text-gray-900 dark:text-white rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-gray-50 dark:bg-gray-700"
-                    placeholder="Email address"
+                    placeholder="אימייל..."
                   />
                 </div>
               </div>
 
               <div>
                 <label htmlFor="password" className="sr-only">
-                  Password
+                  סיסמה
                 </label>
                 <div className="relative">
                   <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
@@ -136,7 +136,7 @@ const Navbar = ({ toggleSidebar }) => {
                     value={formData.password}
                     onChange={handleChange}
                     className="appearance-none relative block w-full pl-10 pr-3 py-2 border border-gray-300 dark:border-gray-600 placeholder-gray-500 dark:placeholder-gray-400 text-gray-900 dark:text-white rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-gray-50 dark:bg-gray-700"
-                    placeholder="Password"
+                    placeholder="סיסמה..."
                   />
                 </div>
               </div>
@@ -154,15 +154,15 @@ const Navbar = ({ toggleSidebar }) => {
                       htmlFor="remember-me"
                       className="ml-2 block text-sm text-gray-900 dark:text-gray-300 cursor-pointer"
                     >
-                      Remember me
+                      זכור אותי{" "}
                     </label>
                   </div>
                   <div className="text-sm">
                     <a
-                      href="#"
+                      href="/"
                       className="font-medium text-blue-600 hover:text-blue-500 dark:text-blue-400 dark:hover:text-blue-300"
                     >
-                      Forgot password?
+                      שכחת סיסמה?{" "}
                     </a>
                   </div>
                 </div>
@@ -179,12 +179,12 @@ const Navbar = ({ toggleSidebar }) => {
                     htmlFor="terms"
                     className="ml-2 block text-sm text-gray-900 dark:text-gray-300 cursor-pointer"
                   >
-                    I agree to the{" "}
+                    אני מסכים ל{" "}
                     <a
-                      href="#"
+                      href="/"
                       className="text-blue-600 hover:text-blue-500 dark:text-blue-400 dark:hover:text-blue-300"
                     >
-                      Terms and Conditions
+                      תנאים והגבלות{" "}
                     </a>
                   </label>
                 </div>
@@ -201,7 +201,7 @@ const Navbar = ({ toggleSidebar }) => {
                     <UserPlus className="h-5 w-5 text-blue-500 group-hover:text-blue-400" />
                   )}
                 </span>
-                {isLogin ? "Sign in" : "Create Account"}
+                {isLogin ? "התחבר" : "צור משתמש"}
               </button>
 
               <div className="text-center">
@@ -211,8 +211,8 @@ const Navbar = ({ toggleSidebar }) => {
                   className="text-sm text-blue-600 hover:text-blue-500 dark:text-blue-400 dark:hover:text-blue-300"
                 >
                   {isLogin
-                    ? "Don't have an account? Sign up"
-                    : "Already have an account? Sign in"}
+                    ? "אין לך חשבון? הירשם עכשיו"
+                    : "כבר יש לך חשבון? התחבר עכשיו"}
                 </button>
               </div>
             </form>

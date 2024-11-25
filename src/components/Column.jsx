@@ -19,11 +19,11 @@ const Column = ({
       <h2 className="font-bold text-lg mb-4 flex items-center dark:text-white">
         <span
           className={`w-3 h-3 rounded-full mr-2 ${
-            columnName === "Todo"
+            columnName === "משימות חדשות"
               ? "bg-yellow-400 dark:bg-yellow-500"
-              : columnName === "Pending"
+              : columnName === "בהמתנה"
               ? "bg-orange-400 dark:bg-orange-500"
-              : columnName === "Working"
+              : columnName === "בעבודה"
               ? "bg-blue-400 dark:bg-blue-500"
               : "bg-green-400 dark:bg-green-500"
           }`}
