@@ -1,5 +1,5 @@
 import React from "react";
-import { Search, Filter } from "lucide-react";
+import { Search } from "lucide-react";
 
 const TaskFilters = ({ onFilterChange, filters }) => {
   return (
@@ -26,11 +26,11 @@ const TaskFilters = ({ onFilterChange, filters }) => {
             onChange={(e) => onFilterChange("priority", e.target.value)}
             value={filters.priority}
           >
-            <option value="">All Priorities</option>
-            <option value="urgent">Urgent</option>
-            <option value="high">High</option>
-            <option value="normal">Normal</option>
-            <option value="low">Low</option>
+            <option value="">כל האפשרויות</option>
+            <option value="urgent">דחוף</option>
+            <option value="high">עדיפות גבוהה</option>
+            <option value="normal">עדיפות סבירה</option>
+            <option value="low">עדיפות נמוכה</option>
           </select>
           <select
             className="px-4 py-2 rounded-lg border border-gray-200 dark:border-gray-700 
@@ -38,7 +38,7 @@ const TaskFilters = ({ onFilterChange, filters }) => {
             onChange={(e) => onFilterChange("assignee", e.target.value)}
             value={filters.assignee}
           >
-            <option value="">All Assignees</option>
+            <option value="">כל הרשומים</option>
             {/* Populate with unique assignees */}
           </select>
         </div>

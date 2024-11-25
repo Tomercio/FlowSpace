@@ -15,13 +15,16 @@ const Board = () => {
   const [newTask, setNewTask] = useState("");
   const [newAssignee, setNewAssignee] = useState("");
   const [newDueDate, setNewDueDate] = useState("");
+  const [newDueTime, setNewDueTime] = useState("");
   const [newPriority, setNewPriority] = useState("רגילה");
   const [editTask, setEditTask] = useState(null);
+  const [editTaskTime, setEditTaskTime] = useState("");
   const [filters, setFilters] = useState({
     search: "",
     priority: "",
     assignee: "",
     dueDate: "",
+    dueTime: "",
   });
   const [showAnalytics, setShowAnalytics] = useState(false);
 
@@ -42,6 +45,23 @@ const Board = () => {
     localStorage.setItem("taskColumns", JSON.stringify(columns));
   }, [columns]);
 
+  const handleTimeUpdate = (taskId, columnName, newTime) => {
+    setColumns((prev) => {
+      const updatedColumns = { ...prev };
+      updatedColumns[columnName] = updatedColumns[columnName].map((task) => {
+        if (task.id === taskId) {
+          return {
+            ...task,
+            dueTime: newTime,
+            lastEdited: new Date().toISOString(),
+          };
+        }
+        return task;
+      });
+      return updatedColumns;
+    });
+  };
+
   const getFilteredTasks = (tasks) => {
     return tasks.filter((task) => {
       const matchesSearch =
@@ -54,9 +74,15 @@ const Board = () => {
         !filters.assignee || task.assignee === filters.assignee;
       const matchesDueDate =
         !filters.dueDate || task.dueDate === filters.dueDate;
+      const matchesDueTime =
+        !filters.dueTime || task.dueTime === filters.dueTime;
 
       return (
-        matchesSearch && matchesPriority && matchesAssignee && matchesDueDate
+        matchesSearch &&
+        matchesPriority &&
+        matchesAssignee &&
+        matchesDueDate &&
+        matchesDueTime
       );
     });
   };
@@ -123,6 +149,7 @@ const Board = () => {
         ...updatedColumns[targetColumn],
         { ...task, lastMoved: new Date().toISOString() },
       ];
+
       return updatedColumns;
     });
   };
@@ -131,6 +158,7 @@ const Board = () => {
     setNewTask("");
     setNewAssignee("");
     setNewDueDate("");
+    setNewDueTime("");
     setNewPriority("רגילה");
     setShowAddModal(false);
   };
@@ -146,6 +174,7 @@ const Board = () => {
       task: newTask,
       assignee: newAssignee,
       dueDate: newDueDate,
+      dueTime: newDueTime,
       priority: newPriority,
       createdAt: new Date().toISOString(),
       comments: [],
@@ -161,7 +190,10 @@ const Board = () => {
 
   const handleEditTask = (columnName, taskId) => {
     const taskToEdit = columns[columnName].find((task) => task.id === taskId);
-    setEditTask({ ...taskToEdit, columnName });
+    if (taskToEdit) {
+      setEditTaskTime(taskToEdit.dueTime || ""); // Set initial time
+      setEditTask({ ...taskToEdit, columnName }); // Set other task data
+    }
   };
 
   const saveEditedTask = () => {
@@ -171,12 +203,17 @@ const Board = () => {
         const updatedColumns = { ...prev };
         updatedColumns[columnName] = updatedColumns[columnName].map((task) =>
           task.id === updatedTask.id
-            ? { ...updatedTask, lastEdited: new Date().toISOString() }
+            ? {
+                ...updatedTask,
+                dueTime: editTaskTime,
+                lastEdited: new Date().toISOString(),
+              }
             : task
         );
         return updatedColumns;
       });
       setEditTask(null);
+      setEditTaskTime("");
     }
   };
 
@@ -191,9 +228,9 @@ const Board = () => {
         return updatedColumns;
       });
       setEditTask(null);
+      setEditTaskTime("");
     }
   };
-
   return (
     <div className="p-6 bg-gray-100 dark:bg-gray-900 min-h-screen" dir="rtl">
       <div className="mb-6 max-w-[98%] mx-auto">
@@ -338,6 +375,17 @@ const Board = () => {
               </div>
               <div>
                 <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+                  שעה{" "}
+                </label>
+                <input
+                  type="time"
+                  value={newDueTime}
+                  onChange={(e) => setNewDueTime(e.target.value)}
+                  className="w-full p-2 border rounded-md dark:bg-gray-700 dark:border-gray-600 dark:text-white"
+                />
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
                   עדיפות
                 </label>
                 <select
@@ -415,6 +463,17 @@ const Board = () => {
                   onChange={(e) =>
                     setEditTask({ ...editTask, dueDate: e.target.value })
                   }
+                  className="w-full p-2 border rounded-md dark:bg-gray-700 dark:border-gray-600 dark:text-white"
+                />
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+                  שעה{" "}
+                </label>
+                <input
+                  type="time"
+                  value={editTaskTime || ""}
+                  onChange={(e) => setEditTaskTime(e.target.value)}
                   className="w-full p-2 border rounded-md dark:bg-gray-700 dark:border-gray-600 dark:text-white"
                 />
               </div>

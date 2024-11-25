@@ -1,10 +1,21 @@
 import React from "react";
-import { Calendar, AlertCircle, User, MoreVertical } from "lucide-react";
+import { Calendar, AlertCircle, User, MoreVertical, Clock } from "lucide-react";
 
 const TaskCard = ({ task, columnName, onDragStart, onTouchStart, onEdit }) => {
   const handleTouchStart = (e) => {
     e.preventDefault();
     onTouchStart(e, task, columnName);
+  };
+
+  const formatTime = (time) => {
+    if (!time) return "";
+    try {
+      // Format time to local time string
+      const [hours, minutes] = time.split(":");
+      return new Date().setHours(hours, minutes, 0, 0);
+    } catch (e) {
+      return time;
+    }
   };
 
   return (
@@ -35,6 +46,12 @@ const TaskCard = ({ task, columnName, onDragStart, onTouchStart, onEdit }) => {
           <User size={14} className="mr-1" />
           {task.assignee}
         </div>
+        {task.dueTime && (
+          <div className="flex items-center text-sm text-gray-500 dark:text-gray-300">
+            <Clock size={14} className="mr-1" />
+            {task.dueTime}
+          </div>
+        )}
         {task.dueDate && (
           <div className="flex items-center text-sm text-gray-500 dark:text-gray-300">
             <Calendar size={14} className="mr-1" />
